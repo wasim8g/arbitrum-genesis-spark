@@ -1,5 +1,5 @@
 
-import { configureChains, createClient } from "wagmi";
+import { configureChains, createConfig } from "wagmi";
 import { arbitrum } from "wagmi/chains";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
@@ -23,7 +23,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 );
 
 // Set up wagmi config
-export const config = createClient({
+export const config = createConfig({
   autoConnect: true,
   connectors: [
     new MetaMaskConnector({ chains })
