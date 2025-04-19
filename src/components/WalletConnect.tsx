@@ -2,7 +2,8 @@
 import { useAccount, useConnect, useDisconnect, useBalance } from 'wagmi';
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { Wallet, LogOut } from "lucide-react";
+import { Wallet, LogOut, Loader2 } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 const WalletConnect = () => {
   const { address, isConnected } = useAccount();
@@ -26,22 +27,40 @@ const WalletConnect = () => {
 
   if (isConnected) {
     return (
-      <div className="flex flex-col items-center gap-4 p-4">
-        <div className="text-sm text-gray-600">Connected to {address}</div>
-        <div className="text-sm text-gray-600">
-          Balance: {balance?.formatted} {balance?.symbol}
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <div className="text-sm text-gray-500">Connected Address</div>
+          <div className="p-3 bg-gray-50 rounded-lg break-all font-mono text-sm">
+            {address}
+          </div>
         </div>
-        <Button onClick={() => disconnect()} variant="outline">
-          <LogOut className="mr-2" />
-          Disconnect
+        <Separator />
+        <div className="space-y-2">
+          <div className="text-sm text-gray-500">Balance</div>
+          <div className="p-3 bg-gray-50 rounded-lg font-mono text-sm">
+            {balance?.formatted} {balance?.symbol}
+          </div>
+        </div>
+        <Button onClick={() => disconnect()} variant="destructive" className="w-full">
+          <LogOut className="mr-2 h-4 w-4" />
+          Disconnect Wallet
         </Button>
       </div>
     );
   }
 
   return (
-    <Button onClick={handleConnect} disabled={isLoading}>
-      <Wallet className="mr-2" />
+    <Button
+      onClick={handleConnect}
+      disabled={isLoading}
+      className="w-full"
+      size="lg"
+    >
+      {isLoading ? (
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+      ) : (
+        <Wallet className="mr-2 h-4 w-4" />
+      )}
       Connect Wallet
     </Button>
   );
