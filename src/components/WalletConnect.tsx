@@ -4,14 +4,26 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { Wallet, LogOut, Loader2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useEffect } from "react";
 
-const WalletConnect = () => {
+interface WalletConnectProps {
+  onAuthenticated?: (status: boolean) => void;
+}
+
+const WalletConnect = ({ onAuthenticated }: WalletConnectProps) => {
   const { address, isConnected } = useAccount();
   const { connect, connectors, isLoading, error } = useConnect();
   const { disconnect } = useDisconnect();
   const { data: balance } = useBalance({
     address: address,
   });
+
+  // Notify parent component about authentication status
+  useEffect(() => {
+    if (onAuthenticated) {
+      onAuthenticated(isConnected);
+    }
+  }, [isConnected, onAuthenticated]);
 
   const handleConnect = async () => {
     try {

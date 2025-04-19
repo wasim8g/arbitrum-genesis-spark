@@ -2,7 +2,9 @@
 import { WagmiConfig } from "wagmi";
 import { config } from "../config/web3";
 import WalletConnect from "@/components/WalletConnect";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
@@ -17,6 +19,16 @@ const Index = () => {
           <CardContent>
             <WalletConnect />
           </CardContent>
+          <CardFooter className="flex justify-center pt-0">
+            <Link to="/social">
+              <Button 
+                variant="outline" 
+                className="mt-4 border-violet-500 text-violet-700 hover:bg-violet-50"
+              >
+                Try ArbiGram - Social App
+              </Button>
+            </Link>
+          </CardFooter>
         </Card>
       </div>
     </WagmiConfig>
