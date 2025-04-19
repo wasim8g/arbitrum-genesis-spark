@@ -1,18 +1,35 @@
 
-import { configureChains, createConfig } from "wagmi";
+import { Chain, configureChains, createClient } from "wagmi";
 import { arbitrum } from "wagmi/chains";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
-import { publicProvider } from "wagmi/providers/public";
+import { alchemyProvider } from "wagmi/providers/alchemy";
+import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 
-const { chains, publicClient } = configureChains(
+// Configure chains & providers
+const { chains, provider } = configureChains(
   [arbitrum],
-  [publicProvider()]
+  [
+    // Use Alchemy if you have an API key
+    // alchemyProvider({ apiKey: 'yourAlchemyApiKey' }),
+    // Fallback to public RPC for Arbitrum
+    jsonRpcProvider({
+      rpc: (chain) => ({
+        http: chain.id === arbitrum.id 
+          ? 'https://arb1.arbitrum.io/rpc' 
+          : '',
+        webSocket: chain.id === arbitrum.id 
+          ? 'wss://arb1.arbitrum.io/ws' 
+          : '',
+      }),
+    }),
+  ]
 );
 
-export const config = createConfig({
+// Set up wagmi config
+export const config = createClient({
   autoConnect: true,
   connectors: [
     new MetaMaskConnector({ chains })
   ],
-  publicClient,
+  provider,
 });
