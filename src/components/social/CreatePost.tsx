@@ -11,6 +11,8 @@ import { toast } from "@/components/ui/use-toast";
 const CreatePost = () => {
   const [postContent, setPostContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
+  const [isCameraActive, setIsCameraActive] = useState(false);
   const { address } = useAccount();
 
   const getInitials = (address: string | undefined) => {
@@ -41,6 +43,30 @@ const CreatePost = () => {
     }, 1500);
   };
 
+  const handleImageUpload = () => {
+    setIsImageUploading(true);
+    
+    // Simulate image upload process
+    setTimeout(() => {
+      toast({
+        description: "Image upload feature would be implemented here",
+      });
+      setIsImageUploading(false);
+    }, 1000);
+  };
+
+  const handleCameraAccess = () => {
+    setIsCameraActive(true);
+    
+    // Simulate camera access
+    setTimeout(() => {
+      toast({
+        description: "Camera access feature would be implemented here",
+      });
+      setIsCameraActive(false);
+    }, 1000);
+  };
+
   return (
     <Card className="sticky top-20">
       <CardHeader className="pb-3">
@@ -65,11 +91,29 @@ const CreatePost = () => {
       
       <CardFooter className="flex justify-between">
         <div className="flex space-x-2">
-          <Button variant="outline" size="icon">
-            <Image className="h-4 w-4" />
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={handleImageUpload}
+            disabled={isImageUploading}
+          >
+            {isImageUploading ? (
+              <div className="h-4 w-4 rounded-full border-2 border-t-transparent border-violet-600 animate-spin" />
+            ) : (
+              <Image className="h-4 w-4" />
+            )}
           </Button>
-          <Button variant="outline" size="icon">
-            <Camera className="h-4 w-4" />
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={handleCameraAccess}
+            disabled={isCameraActive}
+          >
+            {isCameraActive ? (
+              <div className="h-4 w-4 rounded-full border-2 border-t-transparent border-violet-600 animate-spin" />
+            ) : (
+              <Camera className="h-4 w-4" />
+            )}
           </Button>
         </div>
         

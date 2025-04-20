@@ -25,15 +25,51 @@ const WalletConnect = ({ onAuthenticated }: WalletConnectProps) => {
     }
   }, [isConnected, onAuthenticated]);
 
+  // Handle connection errors
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Connection Error",
+        description: error.message || "Failed to connect wallet",
+        variant: "destructive",
+      });
+    }
+  }, [error]);
+
   const handleConnect = async () => {
     try {
-      await connect({ connector: connectors[0] });
-    } catch (error) {
+      // Check if there are available connectors
+      if (connectors && connectors.length > 0) {
+        const connector = connectors[0];
+        console.log("Connecting with connector:", connector.name);
+        await connect({ connector });
+      } else {
+        console.error("No connectors available");
+        toast({
+          title: "Connection Error",
+          description: "No wallet connectors available",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      console.error("Connection error:", err);
       toast({
         title: "Connection Error",
         description: "Failed to connect wallet",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleDisconnect = () => {
+    try {
+      disconnect();
+      toast({
+        title: "Disconnected",
+        description: "Wallet disconnected successfully",
+      });
+    } catch (err) {
+      console.error("Disconnect error:", err);
     }
   };
 
@@ -53,7 +89,7 @@ const WalletConnect = ({ onAuthenticated }: WalletConnectProps) => {
             {balance?.formatted} {balance?.symbol}
           </div>
         </div>
-        <Button onClick={() => disconnect()} variant="destructive" className="w-full">
+        <Button onClick={handleDisconnect} variant="destructive" className="w-full">
           <LogOut className="mr-2 h-4 w-4" />
           Disconnect Wallet
         </Button>

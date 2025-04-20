@@ -4,9 +4,15 @@ import { config } from "../config/web3";
 import WalletConnect from "@/components/WalletConnect";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Index = () => {
+  const navigate = useNavigate();
+
+  const handleGoToSocial = () => {
+    navigate('/social');
+  };
+
   return (
     <WagmiConfig config={config}>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-500/10 to-purple-500/10 p-4">
@@ -20,14 +26,13 @@ const Index = () => {
             <WalletConnect />
           </CardContent>
           <CardFooter className="flex justify-center pt-0">
-            <Link to="/social">
-              <Button 
-                variant="outline" 
-                className="mt-4 border-violet-500 text-violet-700 hover:bg-violet-50"
-              >
-                Try ArbiGram - Social App
-              </Button>
-            </Link>
+            <Button 
+              variant="outline" 
+              className="mt-4 border-violet-500 text-violet-700 hover:bg-violet-50"
+              onClick={handleGoToSocial}
+            >
+              Try ArbiGram - Social App
+            </Button>
           </CardFooter>
         </Card>
       </div>

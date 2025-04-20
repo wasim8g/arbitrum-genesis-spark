@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Heart, MessageSquare, Share } from "lucide-react";
 import { useState } from "react";
+import { toast } from "@/components/ui/use-toast";
 
 // Mock data for posts
 const mockPosts = [
@@ -52,14 +53,37 @@ interface Post {
 const PostCard = ({ post }: { post: Post }) => {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(post.likes);
+  const [commentOpen, setCommentOpen] = useState(false);
 
   const handleLike = () => {
     if (liked) {
       setLikeCount(likeCount - 1);
+      toast({
+        description: "Removed like from post",
+      });
     } else {
       setLikeCount(likeCount + 1);
+      toast({
+        description: "Liked post",
+      });
     }
     setLiked(!liked);
+  };
+
+  const handleComment = () => {
+    setCommentOpen(!commentOpen);
+    if (!commentOpen) {
+      toast({
+        description: "Comment section opened",
+      });
+    }
+  };
+
+  const handleShare = () => {
+    toast({
+      title: "Shared!",
+      description: "Post has been shared",
+    });
   };
 
   return (
@@ -102,12 +126,12 @@ const PostCard = ({ post }: { post: Post }) => {
             <Heart className={`h-4 w-4 mr-1 ${liked ? "fill-current" : ""}`} />
             {likeCount}
           </Button>
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" size="sm" onClick={handleComment}>
             <MessageSquare className="h-4 w-4 mr-1" />
             {post.comments}
           </Button>
         </div>
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" onClick={handleShare}>
           <Share className="h-4 w-4" />
         </Button>
       </CardFooter>
