@@ -1,23 +1,47 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Camera, Image, Send } from "lucide-react";
 import { useAccount } from "wagmi";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
+import { usePostsStore } from "@/store/posts";
 
 const CreatePost = () => {
   const [postContent, setPostContent] = useState("");
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [isCameraActive, setIsCameraActive] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { address } = useAccount();
+  const addPost = usePostsStore((state) => state.addPost);
 
   const getInitials = (address: string | undefined) => {
     if (!address) return "AR";
     return `${address.substring(0, 2)}`;
+  };
+
+  const handleImageUpload = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setIsImageUploading(true);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result as string);
+        setIsImageUploading(false);
+        toast({
+          description: "Image uploaded successfully",
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmitPost = () => {
@@ -32,39 +56,31 @@ const CreatePost = () => {
 
     setIsSubmitting(true);
     
-    // Simulate posting to blockchain
-    setTimeout(() => {
-      toast({
-        title: "Success",
-        description: "Your post has been submitted to Arbitrum!",
-      });
-      setPostContent("");
-      setIsSubmitting(false);
-    }, 1500);
-  };
+    // Add the post to our store
+    addPost({
+      author: address || "Anonymous",
+      authorShort: address ? address.substring(0, 6) : "Anon",
+      content: postContent,
+      image: selectedImage || undefined,
+    });
 
-  const handleImageUpload = () => {
-    setIsImageUploading(true);
+    // Reset form
+    setPostContent("");
+    setSelectedImage(null);
+    setIsSubmitting(false);
     
-    // Simulate image upload process
-    setTimeout(() => {
-      toast({
-        description: "Image upload feature would be implemented here",
-      });
-      setIsImageUploading(false);
-    }, 1000);
+    toast({
+      title: "Success",
+      description: "Your post has been submitted to Arbitrum!",
+    });
   };
 
   const handleCameraAccess = () => {
     setIsCameraActive(true);
-    
-    // Simulate camera access
-    setTimeout(() => {
-      toast({
-        description: "Camera access feature would be implemented here",
-      });
-      setIsCameraActive(false);
-    }, 1000);
+    toast({
+      description: "Camera access feature would be implemented here",
+    });
+    setIsCameraActive(false);
   };
 
   return (
@@ -80,12 +96,38 @@ const CreatePost = () => {
         </div>
       </CardHeader>
       
-      <CardContent>
+      <CardContent className="space-y-4">
         <Textarea
           placeholder="What's happening on Arbitrum today?"
           className="min-h-24 resize-none"
           value={postContent}
           onChange={(e) => setPostContent(e.target.value)}
+        />
+        
+        {selectedImage && (
+          <div className="relative">
+            <img 
+              src={selectedImage} 
+              alt="Selected" 
+              className="w-full h-48 object-cover rounded-lg"
+            />
+            <Button
+              variant="destructive"
+              size="sm"
+              className="absolute top-2 right-2"
+              onClick={() => setSelectedImage(null)}
+            >
+              Remove
+            </Button>
+          </div>
+        )}
+        
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          ref={fileInputRef}
+          onChange={handleFileChange}
         />
       </CardContent>
       
