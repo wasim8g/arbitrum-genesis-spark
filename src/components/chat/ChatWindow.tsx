@@ -59,10 +59,10 @@ const ChatWindow = ({ currentUser, recipientId }: ChatWindowProps) => {
 
     fetchMessages();
 
-    // Subscribe to new messages
+    // Fix the subscription by adding the config parameter
     const subscription = supabase
       .channel('messages')
-      .on('INSERT', (payload) => {
+      .on('INSERT', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
         setMessages(prev => [...prev, payload.new as ChatMessage]);
       })
       .subscribe();
