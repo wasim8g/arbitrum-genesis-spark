@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Home, Search, Bell, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,10 +6,12 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAccount } from "wagmi";
 import { Link } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
+import { useNavigate } from 'react-router-dom';
 
 const SocialHeader = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { address, isConnected } = useAccount();
+  const navigate = useNavigate();
   
   const getInitials = (address: string | undefined) => {
     if (!address) return "AR";
@@ -40,9 +41,7 @@ const SocialHeader = () => {
 
   const handleProfileClick = () => {
     if (isConnected) {
-      toast({
-        description: "Profile page would open here",
-      });
+      navigate('/profile');
     } else {
       toast({
         title: "Not connected",
